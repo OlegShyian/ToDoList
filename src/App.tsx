@@ -9,7 +9,6 @@ interface ITask {
 function App() {
   const [tasks, setTasks] = useState([] as Array<ITask>);
   const [firstNew, setNewFirst] = useState(true);
-  const [isOnTop, setIsOnTop] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,13 +38,12 @@ function App() {
     setTasks((current) => current.filter((task) => task.id !== id));
   };
 
-  const handleSort = () => {
+  const handleSortByNew = () => {
     setTasks([...tasks.reverse()]);
     setNewFirst((current) => !current);
   };
 
   const handleSetCheckedOnTop = () => {
-    setIsOnTop((current) => !current);
     setTasks((current) => {
       const { checked, unChecked } = current.reduce(
         (acc, task) =>
@@ -59,29 +57,47 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '30px' }}>
+    <div
+      style={{
+        padding: '30px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+      }}
+    >
       <form onSubmit={handleSubmit}>
         <input type='text' placeholder='put task' name='task' />
-        <button type='submit'>add</button>
+        <button style={{ marginLeft: '10px' }} type='submit'>
+          add
+        </button>
       </form>
-      <button
-        style={{ marginRight: '10px' }}
-        onClick={handleSort}
-      >{`New first: ${firstNew}`}</button>
-      <button onClick={handleSetCheckedOnTop}>Checked on top</button>
-      {tasks.map(({ task, checked, id }) => (
-        <div key={id} style={{ padding: '5px 0' }}>
-          <input
-            type='checkbox'
-            checked={checked}
-            onChange={() => {
-              handleChecked(id);
-            }}
-          />
-          <span>{task}</span>
-          <button onClick={() => handleTaskRemove(id)}>remove</button>
-        </div>
-      ))}
+      <div>
+        <button
+          style={{ marginRight: '10px' }}
+          onClick={handleSortByNew}
+        >{`New first: ${firstNew}`}</button>
+        <button onClick={handleSetCheckedOnTop}>Checked on top</button>
+      </div>
+      <div>
+        {tasks.map(({ task, checked, id }) => (
+          <div key={id} style={{ padding: '5px 0' }}>
+            <input
+              type='checkbox'
+              checked={checked}
+              onChange={() => {
+                handleChecked(id);
+              }}
+            />
+            <span>{task}</span>
+            <button
+              style={{ marginLeft: '10px' }}
+              onClick={() => handleTaskRemove(id)}
+            >
+              remove
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
